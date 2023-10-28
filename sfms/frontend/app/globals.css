@@ -2,7 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Class Styles */
+.input {
+  border: 1px solid black;
+  width: 200px;
+}
+
+/* ID Styles */
+#input_form {
+  padding: 0 30px;
+  border: 1px solid blue;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#submit_button {
+  border: 1px solid black;
+  border-radius: 10%;
+  padding: 0 20px;
+  width: 120px;
+}
+
+/* Responsive Styles */
+
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -24,4 +48,4 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-}
+} */
