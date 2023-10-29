@@ -11,7 +11,9 @@ function page() {
     <div>
       {/* Title */}
       <div>
-        <h1 className="text-xl">Secure File Management System : Team B</h1>
+        <h1 className="text-xl font-semibold">
+          Secure File Management System : Team B
+        </h1>
       </div>
       {/* User Input Form */}
       <Form />

@@ -10,8 +10,8 @@
 
 /* ID Styles */
 #input_form {
-  padding: 0 30px;
-  border: 1px solid blue;
+  padding: 30px 30px;
+  border: 2px solid black;
   width: 400px;
   display: flex;
   flex-direction: column;
