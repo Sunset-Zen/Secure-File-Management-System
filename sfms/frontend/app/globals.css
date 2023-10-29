@@ -15,7 +15,6 @@
   width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 }
 #submit_button {
   border: 1px solid black;
@@ -25,27 +24,11 @@
 }
 
 /* Responsive Styles */
-
-/* :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-} */
+@media only screen and (min-width: 320px) and (max-width: 677px) {
+} /* Phones */
+@media only screen and (min-width: 677px) and (max-width: 834px) {
+} /* Tablets & Large Tablets*/
+@media only screen and (min-width: 835px) and (max-width: 1200px) {
+} /* Laptops */
+@media only screen and (min-width: 1200px) {
+} /* Large Laptops */
