@@ -1,6 +1,16 @@
 import React, { ReactNode, createContext, useContext, useState } from "react";
 
-const PageContext = createContext({});
+interface IPageContext {
+  onHandleNext: () => void;
+  onHandleBack: () => void;
+  page: number;
+}
+
+const PageContext = createContext<IPageContext>({
+  onHandleBack: () => {},
+  onHandleNext: () => {},
+  page: 1,
+});
 
 interface IProps {
   children: ReactNode;
