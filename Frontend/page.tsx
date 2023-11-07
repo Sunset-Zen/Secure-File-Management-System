@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-// import { FormProvider } from "./components/FormContext";
-// import { FormStep } from "./components/FormStep";
+import { FormProvider } from "./components/FormContext";
+import { FormStep } from "./components/FormStep";
 
 function page() {
   // Attributes | Hook(s)
@@ -17,9 +17,9 @@ function page() {
       </div>
 
       {/* User Input Form */}
-      {/* <FormProvider>
+      <FormProvider>
         <FormStep />
-      </FormProvider> */}
+      </FormProvider>
     </div>
   );
 }
