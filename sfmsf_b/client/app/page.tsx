@@ -12,8 +12,11 @@ function Home() {
 
   // TSX
   return (
-    <div>
-      <h1 className="text-xl font-semibold">{title}</h1>
+    <div
+      className="bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800 text-white-500"
+      style={{ height: "800px" }}
+    >
+      <h1 className="text-xl font-semibold text-white">{title}</h1>
 
       {/* File System Application */}
       <SystemContextProvider>
