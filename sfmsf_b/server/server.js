@@ -26,7 +26,8 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     unique_ID++;
-    return cb(null, `${unique_ID}_${file.originalname}`);
+    // return cb(null, `${file.originalname}`); // ( By Name )
+    return cb(null, `${unique_ID}_${file.originalname}`); // ( By ID )
   },
 });
 const upload = multer({ storage });
@@ -41,8 +42,9 @@ app.post("/upload", upload.array("files"), (req, res) => {
   console.log(req.body.uid);
 });
 
-//( Delete : DELETE Route )
+// ( Delete : DELETE Route )
 app.delete("/delete/:fileName", (req, res) => {
+  unique_ID--;
   const fname = req.params.fileName;
   console.log(`Filename : ${fname}`);
   const filePath = path.join(filesDirectory, fname);
@@ -126,6 +128,5 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // });
 
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 /* Multer : Requires the user to hit the upload button twice  */
 /* fileUpload : ??? */

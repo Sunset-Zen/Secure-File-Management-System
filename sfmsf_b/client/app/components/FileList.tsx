@@ -5,50 +5,102 @@ import axios from "axios";
 
 function FileList(props: any) {
   // Attributes | Hook(s)
-  const [counter, setCounter] = useState<number>(0);
-  const [fileNames, setFileNames] = useState<string[]>([]);
+  const [fileNames, setFileNames] = useState<string[]>([]); // change ???
   const [fileList, setFileList] = useState<any[]>([]);
+  const [referenceList, setReference] = useState<any[]>([]);
+  const [count, setCount] = useState<number>(0);
   const { username } = useSystemState();
 
-  const [selectedFiles, setSelectedFiles] = useState<FileList>(); // sent to backend
+  const [selectedFiles, setSelectedFiles] = useState<FileList>(); // Send to the backend
+  let counter: number | undefined = count;
 
-  // Permissions ( RED )
-  const [red, setRED] = useState(props.fullAccess);
-  const [re, setRE] = useState(false);
-  const [r, setR] = useState(false);
-
-  useEffect(() => {
-    // Filter out FileNames with Active: False
-    // setCounter((prev) => (prev = fileList.length));
-    // console.log("File List", fileList);
-    // console.log("File List Length", counter);
+  const [displayFiles, setDisplayFiles] = useState<any[]>([]); // Display on the frontend
+  const [fileItem, setFileItem] = useState<any>({
+    id: counter + 1,
+    name: "",
+    active: true,
   });
 
-  // Functions
-  const upload = () => {
+  // Permissions ( D.U.D )
+  const [red, setRED] = useState(props.fullAccess); // Full Access ( Download, Upload, Delete )
+  const [re, setRE] = useState(false); // Limited Access ( Download, Upload )
+  const [r, setR] = useState(false); // Limited Access ( Download )
+  const [n, setN] = useState(false); // No Access ( * Restricted * )
+
+  // Update Render Function
+  useEffect(() => {
+    // ( Debug Attributes )
+    // console.log("File List", fileList);
+    // console.log("File List Length", fileList.length);
+    // console.log("Reference List", referenceList);
+    // console.log("Reference List Length", referenceList.length);
+    // console.log("File Names List :", fileNames);
+    console.log("File Item :", fileItem);
+    console.log("Display Files :", displayFiles);
+    console.log("Global Counter :", counter);
+    console.log("Selected Files Length: ", selectedFiles?.length);
+  }, [selectedFiles, referenceList, fileList, fileNames, fileItem]);
+
+  // Functions : ( Application Functionality )
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSelectedFiles(e.target.files);
+    }
+  }; // ( setSelectedFiles == to input )
+  const uploadFiles = () => {
     if (!selectedFiles) {
       alert(`( ${username} ) had No file selected`);
       return;
     }
     console.log(selectedFiles);
 
-    // (Frontend) : Renders File Names 1
-    let newItems: any[] = [];
-    let objectList: any[] = [];
+    // ( Frontend ) : Renders File Names 1
+    let newItems: any[] = []; // fileNames buffer
+    let objectList: any[] = []; // fileList buffer
+    let tempreferenceList: any[] = [];
+
+    // Iterate through Selected Files
     for (let i = 0; i < selectedFiles.length; i++) {
-      newItems.push(selectedFiles[i].name);
+      // Update Count
+      // counter++;
+      // Create a temporary object buffer -> populate with file
       let tempObj = {
         file: selectedFiles[i],
       };
+      // Push Temp File Object to array buffer
       objectList.push(tempObj);
+      // Trial 1 : (Display File)
+      let tempFile = {
+        id: counter,
+        name: selectedFiles[i].name,
+        active: true,
+      };
+      tempreferenceList.push(tempFile);
+      console.log("Temp Reference List :", tempreferenceList); // Trial 1 : (Display File)
     }
-    const x = [...fileNames, ...newItems];
-    console.log(newItems);
-    console.log(objectList);
-    setFileNames([...fileNames, ...x]);
-    setFileList([...fileList, ...objectList]);
 
-    // (Backend) : Begin Backend POST
+    setReference((prev) => [...prev, ...tempreferenceList]); // Trial 1 : (Display File)
+    setFileList([...fileList, ...objectList]);
+    // const x = [...fileNames, ...newItems];
+    // console.log(newItems);
+    // console.log(objectList);
+    // setFileNames([...fileNames, ...x]);
+
+    newItems = tempreferenceList.map((item) => item.name);
+    setFileNames((prev) => [...prev, ...newItems]);
+    // setCount((prev) => (prev = counter));
+
+    // console.log("Reference List :", referenceList); // Trial 1 : (Display File)
+    // console.log("File Names List :", fileNames);
+
+    // Iterate through referenceList to Update File Names that will be rendered
+    // for (let i = 0; i < referenceList.length; i++) {
+    //   // if active -> push
+    //   newItems.push(referenceList[i].name);
+    // }
+    // setFileNames([...fileNames, ...newItems]);
+
+    // ( Backend ) : Begin Backend POST
     const formData = new FormData();
     Object.keys(selectedFiles).forEach((key: any) => {
       if (selectedFiles) {
@@ -64,29 +116,111 @@ function FileList(props: any) {
     selectedFiles.length > 1
       ? alert(`( ${username} ) Uploaded Multiple Files`)
       : alert(`( ${username} ) Uploaded A ( ${selectedFiles[0].type} ) File`);
-  };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setSelectedFiles(e.target.files);
-    }
-  };
+  }; // ( Upload A File )
   const deleteFile = async (target: any) => {
     // ( Front End Logic )
     let ilist: any[] = [];
+    let tflist: any[] = [];
     let temp: any;
-    for (let i = 0; i < fileNames.length; i++) {
+    setCount((prev) => prev - 1);
+
+    // BY Name ->
+    // ilist = fileNames.filter((name) => name !== target);
+    // setFileNames(ilist);
+
+    // By ID -> under progress...
+    for (let i = 0; i < referenceList.length; i++) {
       if (i !== target - 1) {
-        ilist.push(fileNames[i]);
+        ilist.push(referenceList[i]);
+        tflist.push(fileList[i]);
       } else {
-        temp = fileNames[i];
+        temp = referenceList[i].name;
       }
     }
-    setFileNames(ilist);
+    setReference(ilist);
+    setFileList(tflist);
 
     // ( Backend Logic )
     try {
       const response = await axios.delete(
         `http://localhost:5500/delete/${target}_${temp}`
+      );
+      console.log("File deleted successfully:", response.data);
+      console.log("File List ", fileList);
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  }; // ( Delete A File )
+
+  const uploadFile = (list: any) => {
+    // ( Frontend ) : Render Logic (Multiple File Upload)
+    if (list.length > 1) {
+      let templist: any[] = [];
+      for (let x = 0; x < list.length; x++) {
+        setCount((prev) => prev + 1);
+        let temp = {
+          id: x + 1,
+          name: list[x].name,
+          active: true,
+        };
+        templist.push(temp);
+        setFileItem((prev: any) => (prev = temp));
+      }
+      setDisplayFiles([...displayFiles, ...templist]);
+    } else {
+      // ( Frontend ) : Render Logic (Single File Upload)
+      setCount((prev) => prev + 1);
+      let temp = {
+        id: counter + 1,
+        name: list[0].name,
+        active: true,
+      };
+      setFileItem((prev: any) => (prev = temp));
+      let templist: any[] = [];
+      templist.push(temp);
+      setDisplayFiles([...displayFiles, ...templist]);
+    }
+
+    // ( Backend ) : Begin Backend POST
+    const formData = new FormData();
+    Object.keys(list).forEach((key: any) => {
+      if (list) {
+        formData.append("files", list[key]);
+      }
+    });
+    axios
+      .post("http://localhost:5500/upload", formData)
+      .then((res) => {})
+      .catch((er) => console.log(er));
+
+    // ( Alert )
+    list.length > 1
+      ? alert(`( ${username} ) Uploaded Multiple Files`)
+      : alert(`( ${username} ) Uploaded A ( ${list[0].type} ) File`);
+  };
+  const removeFile = async (target: number) => {
+    // ( Frontend ): Render Logic
+    let tempA: string = "";
+    if (displayFiles.length > 1) {
+      for (let i = 0; i < displayFiles.length; i++) {
+        if (i + 1 === target) {
+          tempA = displayFiles[i].name;
+        }
+      }
+    } else {
+      tempA = displayFiles[0].name; // unsure
+    }
+
+    console.log(`Target Object : ${tempA}`);
+    setCount((prev) => prev - 1);
+    setDisplayFiles((prev) => {
+      return prev.filter((file) => file.id !== target);
+    });
+
+    // ( Backend ): Begin Backend DELETE Logic
+    try {
+      const response = await axios.delete(
+        `http://localhost:5500/delete/${target}_${tempA}`
       );
       console.log("File deleted successfully:", response.data);
     } catch (error) {
@@ -107,16 +241,32 @@ function FileList(props: any) {
           gap: "10px",
         }}
       >
-        {fileNames?.map((item: string, index) => (
-          <div key={index} className="bg-grey-200 rounded-md">
+        {/* ( New Render ) : Iterate through reference list and render : Object Based */}
+        {displayFiles.map((file: any, index) => (
+          <div key={file.id}>
             <File
-              filename={item}
-              uid={index + 1}
-              active={"true"}
-              rmvfile={deleteFile}
+              filename={file.name}
+              uid={file.id}
+              active={file.active}
+              rmvfile={removeFile}
             />
           </div>
         ))}
+
+        {/* {referenceList?.map(
+          (item: any, index) =>
+            // If item is active -> render
+            item.active && (
+              <div key={index}>
+                <File
+                  filename={item.name}
+                  uid={item.id}
+                  active={item.active}
+                  rmvfile={deleteFile}
+                />
+              </div>
+            )
+        )} */}
       </ul>
 
       {/* Full Access */}
@@ -131,7 +281,8 @@ function FileList(props: any) {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              upload();
+              // uploadFiles();
+              uploadFile(selectedFiles);
             }}
           >
             <input
@@ -180,104 +331,6 @@ export default FileList;
             )}
           /> */
 }
-// Functions
-// const onSubmit = async (data: any) => {
-//   if (!files) {
-//     alert(`( ${username} ) had No file selected`);
-//     return;
-//   }
-
-//   console.log(data);
-//   console.log(`File 1`, data.file[0]);
-//   console.log(`File 2`, data.file[1]);
-//   // console.log(data.file.length);
-//   // console.log(data.file[0].name);
-
-//   let newItems: any[] = [];
-//   for (let i = 0; i < data.file.length; i++) {
-//     newItems.push(data.file[i].name);
-//   }
-//   console.log(newItems);
-
-//   const x = [...files, ...newItems];
-//   setFiles(x);
-
-//   // console.log(data.files);
-
-//   const formData = new FormData();
-//   for (let i = 0; i < files.length; i++) {
-//     formData.append(`file${i + 1}`, data.file[i]);
-//   }
-
-//   fetch("http://localhost:4000/api", {
-//     method: "POST",
-//     body: formData,
-//   })
-//     .then((res) => res.json())
-//     .then((data) => console.log(data));
-
-//   // if (data.file) {
-//   //   // for (let i = 0; i < data.file.length; i++) {
-//   //   //   // newItems.push(data.file[i].name);
-//   //   //   Object.keys(data.file[i].array.forEach(element => {
-//   //   //   });)
-//   //   // }
-//   //   // Object.keys(data.file).forEach((key) => {
-//   //   //   formData.append(data.file.item(key).name, data.file.item(key));
-//   //   // });
-//   // } else {
-//   //   console.log(`data null`);
-//   // }
-
-//   // try {
-//   //   const response = await fetch("http://localhost:4000/upload", {
-//   //     method: "POST",
-//   //     body: formData,
-//   //   });
-//   //   if (response.ok) {
-//   //     // Get JSON from the response
-//   //     console.log("File uploaded successfully");
-//   //     console.log(formData.values());
-//   //     const json = await response.json();
-//   //     json
-//   //       ? console.log(`File JSON : ${json.toString()}`)
-//   //       : console.log(`No JSON`);
-//   //   } else {
-//   //     console.error("Failed to upload file");
-//   //   }
-//   // } catch (error) {
-//   //   console.error("Error uploading file:", error);
-//   // }
-
-//   // ( Alert )
-//   data.file.length > 1
-//     ? alert(`( ${username} ) Uploaded Multiple Files`)
-//     : alert(`( ${username} ) Uploaded A ( ${data.file[0].type} ) File`);
-// };
-
-// File Upload Form Function(s)
-// const handleUpload = async (data: { files: FileList }) => {
-//   const formData = new FormData();
-//   for (let i = 0; i < data.files.length; i++) {
-//     formData.append(`file${i + 1}`, data.files[i]);
-//   }
-
-//   try {
-//     const response = await fetch("http://localhost:4000/upload", {
-//       method: "POST",
-//       body: formData,
-//     });
-
-//     if (response.ok) {
-//       console.log("Files uploaded successfully");
-//     } else {
-//       console.error("Failed to upload files");
-//     }
-//   } catch (error) {
-//     console.error("Error uploading files:", error);
-//   }
-// };
-
 {
   // Send to Backend (1)
   // fetch("http://localhost:5500/upload", {
@@ -320,7 +373,6 @@ export default FileList;
   //   console.error("Error uploading file:", error);
   // }
 }
-
 {
   /* handleSubmit(onSubmit) */
 }
@@ -339,7 +391,21 @@ export default FileList;
             )}
           /> */
 }
-
+{
+  /* ( Old Render ) */
+}
+{
+  /* {fileNames?.map((item: string, index) => (
+          <div key={index}>
+            <File
+              filename={item}
+              uid={index + 1}
+              active={"true"}
+              rmvfile={deleteFile}
+            />
+          </div>
+        ))} */
+}
 /*
   // Prev Functions
   const onSubmit = async () => {

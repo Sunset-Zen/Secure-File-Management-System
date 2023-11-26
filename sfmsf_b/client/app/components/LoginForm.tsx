@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../globals.css";
 import { useForm } from "react-hook-form";
 import { useSystemState } from "./SystemContext";
+import axios from "axios";
 
 // Declare variable types
 type TFormValues = {
@@ -18,11 +19,19 @@ function LoginForm(props: any) {
 
   // Functions
   function onHandleFormSubmit(data: TFormValues) {
-    // console.log({ data });
     console.log(`Username: ${user} \t Password: ${pass}`);
     changeUsername(user);
     changePassword(pass);
     toNextPage();
+
+    // ( Log / Audit Action )
+    let str = `User Verified Login:\t${user}\t${pass}`;
+    // axios
+    //   .post("http://localhost:5500/upload", str)
+    //   .then((res) => {})
+    //   .catch((er) => console.log(er));
+
+    // ( Run Credentials Through LDAP )
   }
 
   // TSX

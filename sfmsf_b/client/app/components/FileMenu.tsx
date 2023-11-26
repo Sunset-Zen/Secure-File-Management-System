@@ -14,7 +14,7 @@ function FileMenu() {
       <div className="text-white">
         <div className="flex gap-10" style={{ height: "30px" }}>
           <h2 className="text-lg font-semibold" style={{ height: "30px" }}>
-            File Menu Page ( <i className="text-orange-600">{user}</i> )
+            File Menu Page ( <i className="text-blue-200">{user}</i> )
           </h2>
           {/* Logout Button */}
           <button
@@ -26,7 +26,7 @@ function FileMenu() {
           </button>
         </div>
         <p>
-          <b>Key</b>: R - Read | E - Edit | D - Delete
+          <b>Key</b>: D - Download | U - Upload | D - Delete
         </p>
       </div>
 
@@ -36,8 +36,8 @@ function FileMenu() {
         <div className="mt-10">
           {/* Title */}
           <div className="">
-            <h1 className="text-lg font-semibold text-green-700">
-              Full Access Files (RED)
+            <h1 className="text-lg font-semibold text-white">
+              {username} Files (D.U.D)
             </h1>
           </div>
           {/* File List */}
@@ -51,8 +51,8 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold text-blue-700">
-                Read & Edit Files (RE)
+              <h1 className="text-lg font-semibold  text-white">
+                Download & Upload Files (D.U)
               </h1>
             </div>
             {/* File List */}
@@ -65,8 +65,8 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold text-purple-700">
-                Read Only Files (R)
+              <h1 className="text-lg font-semibold  text-white">
+                Download Only Files (D)
               </h1>
             </div>
             {/* File List */}
@@ -79,7 +79,7 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold text-red-700">
+              <h1 className="text-lg font-semibold  text-white">
                 Unavailable Files ( No Access )
               </h1>
             </div>
