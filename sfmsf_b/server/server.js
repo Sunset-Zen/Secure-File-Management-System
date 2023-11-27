@@ -6,6 +6,7 @@ const { logger, logEvents } = require("./middleware/logEvents");
 const corsConfig = require("./config/corsConfig");
 const path = require("path");
 const fs = require("fs");
+const ldap = require("ldapjs");
 
 // ( Attributes )
 const app = express();
@@ -130,3 +131,79 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 /* Multer : Requires the user to hit the upload button twice  */
 /* fileUpload : ??? */
+const client = ldap.createClient({
+  url:['ldap://127.0.0.1:389']})
+
+app.post("/login", (req, res) => {
+  //from form
+  var username = req.body.username;
+  var password = req.body.password;
+
+  client.bind('cn=root','secret',(err)=>{
+    //bind server to ldap server
+    //assert.ifError(err);
+    //console.log("bind error");
+  })
+  const opts = {
+    //search options: search entire tree for matches where cn=username and return cn, salt, and password
+    filter: '(&(cn='+username+'))',
+    scope: 'base',
+    attributes:['cn', 'salt', 'password'] 
+  }
+  client.search('o=myhost', opts, (err,ldapRes)=>{
+    //assert.ifError(err);
+    ldapRes.on('searchRequest', (searchRequest)=>{
+      //console.log("ldap result: " + searchRequest);
+    })
+    
+    ldapRes.on('searchEntry', (entry) =>{
+      var cn, salt, passwd;
+      entry.attributes.forEach(attribute => {
+        //parse the results - ldap gives attributes in inconsistent order
+        var type = attribute.type;
+        switch(type){
+          case "cn":
+            cn = attribute.values[0];
+            break;
+          case "salt":
+            salt = attribute.values[0];
+            break;
+          case "password":
+            passwd = attribute.values[0];
+            break;
+          default:
+            console.log("unknown type \"" + type + "\"");
+        }
+      });
+      console.log("Attempt: " + cn + " " + password);
+      password = salt + password;
+      hashText(password).then((result)=>{
+        // console.log(result);
+        // console.log(passwd);
+        if(cn === username && result === passwd){
+          console.log("Valid login information provided");
+          res.status(200).json({ message: "Valid credentials" });
+          //res.send();
+        }
+        else{
+          console.log("Invalid credentials");
+          res.status(403).json({ error: "Invalid credentials" });
+          //res.send();
+        }
+      });
+      
+    })
+  })
+  
+  
+})
+
+async function hashText(text){
+  const msgUint8 = new TextEncoder().encode(text);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2,"0"))
+    .join("");
+  return hashHex;
+}

@@ -22,16 +22,28 @@ function LoginForm(props: any) {
     console.log(`Username: ${user} \t Password: ${pass}`);
     changeUsername(user);
     changePassword(pass);
-    toNextPage();
-
-    // ( Log / Audit Action )
-    let str = `User Verified Login:\t${user}\t${pass}`;
-    // axios
-    //   .post("http://localhost:5500/upload", str)
-    //   .then((res) => {})
-    //   .catch((er) => console.log(er));
+    
+    axios
+       .post("http://localhost:5500/login", {
+        username:user,
+        password:pass
+       })
+       .then((res) => {
+        console.log(res);
+        if(res.status == 200){
+          toNextPage();
+        }
+        else if(res.status == 403){
+          console.log("Invalid login credentials");
+        }
+       })
+       .catch((er) => console.log(er));
 
     // ( Run Credentials Through LDAP )
+    // ( Log / Audit Action )
+    //toNextPage();
+    let str = `User Verified Login:\t${user}\t${pass}`;
+    
   }
 
   // TSX
