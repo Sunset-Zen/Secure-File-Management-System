@@ -20,6 +20,7 @@ function FileList(props: any) {
     name: "",
     active: true,
   });
+  let prevNum = counter + 1;
 
   // Permissions ( D.U.D )
   const [red, setRED] = useState(props.fullAccess); // Full Access ( Download, Upload, Delete )
@@ -30,11 +31,6 @@ function FileList(props: any) {
   // Update Render Function
   useEffect(() => {
     // ( Debug Attributes )
-    // console.log("File List", fileList);
-    // console.log("File List Length", fileList.length);
-    // console.log("Reference List", referenceList);
-    // console.log("Reference List Length", referenceList.length);
-    // console.log("File Names List :", fileNames);
     console.log("File Item :", fileItem);
     console.log("Display Files :", displayFiles);
     console.log("Global Counter :", counter);
@@ -62,7 +58,6 @@ function FileList(props: any) {
     // Iterate through Selected Files
     for (let i = 0; i < selectedFiles.length; i++) {
       // Update Count
-      // counter++;
       // Create a temporary object buffer -> populate with file
       let tempObj = {
         file: selectedFiles[i],
@@ -159,7 +154,7 @@ function FileList(props: any) {
       for (let x = 0; x < list.length; x++) {
         setCount((prev) => prev + 1);
         let temp = {
-          id: x + 1,
+          id: prevNum + x,
           name: list[x].name,
           active: true,
         };
