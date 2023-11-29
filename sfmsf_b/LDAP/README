@@ -1,1 +1,0 @@
-ldapmodify -x -D "(admin / root acct)" -w (admin password) -f credentials.ldif
