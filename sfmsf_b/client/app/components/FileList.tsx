@@ -23,9 +23,9 @@ function FileList(props: any) {
   let prevNum = counter + 1;
 
   // Permissions ( D.U.D )
-  const [red, setRED] = useState(props.fullAccess); // Full Access ( Download, Upload, Delete )
-  const [re, setRE] = useState(false); // Limited Access ( Download, Upload )
-  const [r, setR] = useState(false); // Limited Access ( Download )
+  const [dud, setDUD] = useState(props.fullAccess); // Full Access ( Download, Upload, Delete )
+  const [du, setDU] = useState(props.limitedDU); // Limited Access ( Download, Upload )
+  const [d, setD] = useState(props.limitedD); // Limited Access ( Download )
   const [n, setN] = useState(false); // No Access ( * Restricted * )
 
   // Update Render Function
@@ -89,7 +89,7 @@ function FileList(props: any) {
     list.length > 1
       ? alert(`( ${username} ) Uploaded Multiple Files`)
       : alert(`( ${username} ) Uploaded A ( ${list[0].type} ) File`);
-  };
+  }; // ( Function ) : Upload File
   const removeFile = async (target: number) => {
     // ( Frontend ): Render Logic
     let tempA: string = "";
@@ -118,7 +118,58 @@ function FileList(props: any) {
     } catch (error) {
       console.error("Error deleting file:", error);
     }
-  };
+  }; // ( Function ) : Delete File
+
+  const downloadFile = async (index: any) => {
+    // ( Frontend ): Render Logic
+    let tempA: string = "";
+    if (displayFiles.length > 1) {
+      for (let i = 0; i < displayFiles.length; i++) {
+        if (i + 1 === index) {
+          tempA = displayFiles[i].name;
+        }
+      }
+    } else {
+      tempA = displayFiles[0].name; // unsure
+    }
+    alert(`${username} downloaded ${tempA} with ID : ${index}`);
+
+    // ( Backend ): Begin Backend DOWNLOAD Logic
+    try {
+      const response = await axios({
+        url: `http://localhost:5500/download/${index}_${tempA}`,
+        method: "GET",
+        responseType: "blob",
+      });
+
+      // Create a link element and trigger a click to download the file
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${index}_${tempA}`); // Replace with the desired filename
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+    // try {
+    //   const response = await axios
+    //     .get(`http://localhost:5500/download/${index}_${tempA}`, {
+    //       responseType: "blob",
+    //     })
+    //     .then((obj) => {
+    //       // Create View URL
+    //       const url = URL.createObjectURL(obj.data);
+    //       const a = document.createElement("a");
+    //       a.href = url;
+    //       a.download = `random-image.jpg`;
+    //       document.body.appendChild(a);
+    //     });
+    //   console.log("File downloaded successfully:", response);
+    // } catch (error) {
+    //   console.error("Error downloading file:", error);
+    // }
+  }; // ( Function ) : Download File
 
   // TSX
   return (
@@ -134,20 +185,57 @@ function FileList(props: any) {
         }}
       >
         {/* ( New Render ) : Iterate through reference list and render : Object Based */}
-        {displayFiles.map((file: any, index) => (
-          <div key={file.id}>
-            <File
-              filename={file.name}
-              uid={file.id}
-              active={file.active}
-              rmvfile={removeFile}
-            />
-          </div>
-        ))}
+        {displayFiles.map((file: any, index) =>
+          dud ? (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ) : du ? (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                du={true}
+              />
+            </div>
+          ) : d ? (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                d={true}
+              />
+            </div>
+          ) : (
+            n && (
+              <div key={file.id}>
+                <File
+                  filename={file.name}
+                  uid={file.id}
+                  active={file.active}
+                  rmvfile={removeFile}
+                  dud={true}
+                />
+              </div>
+            )
+          )
+        )}
       </ul>
-
       {/* Full Access */}
-      {red && (
+      {dud && (
         <div
           className="flex ml-5"
           style={{
@@ -173,8 +261,53 @@ function FileList(props: any) {
               type="submit"
               style={{
                 position: "relative",
-                right: "333px",
-                top: "150px",
+                right: "340px",
+                top: "50px",
+              }}
+              className="border-grey-700 border-2 rounded-md text-white bg-black px-6"
+            >
+              Upload
+            </button>
+          </form>
+        </div>
+      )}
+      {/* Limited Access */}
+      {du && (
+        <div
+          className=" ml-5"
+          style={{
+            height: "200px",
+            display: "relative",
+            // border: "1px solid green",
+            width: "240px",
+          }}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              // uploadFiles();
+              uploadFile(selectedFiles);
+            }}
+            style={{
+              // border: "1px solid blue",
+              height: "80px",
+              width: "100%",
+              // display: "flex",
+            }}
+          >
+            <input
+              type="file"
+              name="files"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+            />
+            <button
+              type="submit"
+              style={{
+                position: "relative",
+                // right: "333px",
+                top: "20px",
               }}
               className="border-grey-700 border-2 rounded-md text-white bg-black px-6"
             >

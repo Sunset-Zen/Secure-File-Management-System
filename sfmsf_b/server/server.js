@@ -11,6 +11,7 @@ const fs = require("fs");
 const app = express();
 const PORT = 5500;
 const filesDirectory = path.join(__dirname, "files");
+const downloadDirectory = path.join(__dirname, "dfiles");
 app.use(cors(corsConfig));
 app.use(express.json());
 
@@ -39,7 +40,7 @@ app.post("/upload", upload.array("files"), (req, res) => {
     req.files[i].uid = i + 1;
   }
   console.log(req.files);
-  console.log(req.body.uid);
+  // console.log(req.body.uid);
 });
 
 // ( Delete : DELETE Route )
@@ -56,6 +57,20 @@ app.delete("/delete/:fileName", (req, res) => {
     console.error("Error deleting file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+
+// ( Download : DOWNLOAD Route )
+app.get("/download/:fileName", (req, res) => {
+  const fname = req.params.fileName;
+  try {
+    res.download(`./files/${fname}`);
+    res.status(200).json({ message: "File downloaded successfully" });
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+
+  // const filePath = path.join(downloadDirectory, fname);
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

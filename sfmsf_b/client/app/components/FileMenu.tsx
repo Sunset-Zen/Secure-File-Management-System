@@ -52,21 +52,21 @@ function FileMenu() {
             {/* Title */}
             <div>
               <h1 className="text-lg font-semibold  text-white">
-                Download & Upload Files (D.U)
+                userB Files (D.U)
               </h1>
             </div>
             {/* File List */}
             <div className="mt-2">
-              <FileList fullAccess={false} />
+              <FileList fullAccess={false} limitedDU={true} />
             </div>
           </div>
 
-          {/* Read Only Files */}
+          {/* Download Only Files */}
           <div className="mt-10">
             {/* Title */}
             <div>
               <h1 className="text-lg font-semibold  text-white">
-                Download Only Files (D)
+                userB Files (D)
               </h1>
             </div>
             {/* File List */}
@@ -80,7 +80,7 @@ function FileMenu() {
             {/* Title */}
             <div>
               <h1 className="text-lg font-semibold  text-white">
-                Unavailable Files ( No Access )
+                userC Files ( No Access )
               </h1>
             </div>
             {/* File List */}
