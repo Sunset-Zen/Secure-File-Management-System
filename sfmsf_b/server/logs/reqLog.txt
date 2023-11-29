@@ -562,3 +562,5 @@
 20231129	08:47:52	5ead48e4-a0d2-45c4-b56b-be005c07e2e1	DELETE	http://localhost:3000	/delete/1_Overview.png
 20231129	08:47:57	dcb330db-e583-4573-adaf-d42523ed26dc	DELETE	http://localhost:3000	/delete/2_Proj-overview2.jpg
 20231129	08:48:53	9c552fa2-eac9-457b-81da-0239c8f61a00	DELETE	http://localhost:3000	/delete/3_Proj-schematic2.png
+20231129	10:52:06	4c7e0247-bc0a-4d7c-bcde-78b2d021a99a	POST	http://localhost:3000	/upload
+20231129	11:01:58	60f32bd4-3a7c-4d5e-b4fc-5747ba55347b	DELETE	http://localhost:3000	/delete/1_Proj-overview1.jpg

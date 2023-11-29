@@ -51,9 +51,22 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold  text-white">
-                userB Files (D.U)
-              </h1>
+              {/* Access Control : Render */}
+              {username == "ojacks7" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  tgeor13 Files (D.U)
+                </h1>
+              ) : username == "tgeor13" ? (
+                <h1 className="text-white text-lg  font-semibold">
+                  jdoe Files (D.U)
+                </h1>
+              ) : username == "jdoe" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  ojacks7 Files (D.U)
+                </h1>
+              ) : (
+                <h1 className="text-white font-semibold">Files (D.U)</h1>
+              )}
             </div>
             {/* File List */}
             <div className="mt-2">
@@ -65,9 +78,22 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold  text-white">
-                userB Files (D)
-              </h1>
+              {/* Access Control : Render */}
+              {username == "ojacks7" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  tgeor13 Files (D)
+                </h1>
+              ) : username == "tgeor13" ? (
+                <h1 className="text-white text-lg  font-semibold">
+                  jdoe Files (D)
+                </h1>
+              ) : username == "jdoe" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  ojacks7 Files (D)
+                </h1>
+              ) : (
+                <h1 className="text-white font-semibold">Files (D.U)</h1>
+              )}
             </div>
             {/* File List */}
             <div className="mt-2">
@@ -79,9 +105,22 @@ function FileMenu() {
           <div className="mt-10">
             {/* Title */}
             <div>
-              <h1 className="text-lg font-semibold  text-white">
-                userC Files ( No Access )
-              </h1>
+              {/* Access Control : Render */}
+              {username == "ojacks7" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  jdoe Files (No Access)
+                </h1>
+              ) : username == "tgeor13" ? (
+                <h1 className="text-white text-lg  font-semibold">
+                  ojacks7 Files (No Access)
+                </h1>
+              ) : username == "jdoe" ? (
+                <h1 className="text-white text-lg font-semibold">
+                  tgeor13 Files (No Access)
+                </h1>
+              ) : (
+                <h1 className="text-white font-semibold">Files (No Access)</h1>
+              )}
             </div>
             {/* File List */}
             <div className="mt-2">
@@ -90,14 +129,6 @@ function FileMenu() {
           </div>
         </div>
       </section>
-
-      {/* Logout Button */}
-      {/* <button
-        className="border rounded-md text-white px-6 bg-red-700 mt-10"
-        onClick={toLastPage}
-      >
-        <h2>Logout</h2>
-      </button> */}
     </div>
   );
 }
