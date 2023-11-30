@@ -11,7 +11,7 @@ function FileMenu() {
   const recordLogout = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5500/logout/${user}`,
+        `https://localhost:5500/logout/${user}`,
         {
           message: user,
         }

@@ -48,7 +48,7 @@ function LoginForm(props: any) {
   }
   const recordLogin = async () => {
     try {
-      const response = await axios.post(`http://localhost:5500/login/${user}`, {
+      const response = await axios.post(`https://localhost:5500/login/${user}`, {
         message: user,
       });
       // Handle the response from the server

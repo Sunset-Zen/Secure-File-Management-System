@@ -3,4 +3,4 @@ LDAP:
 Server:
     npm start
 Client:
-    npm run dev
+    sudo node server.js

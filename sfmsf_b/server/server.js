@@ -123,13 +123,16 @@ app.delete("/delete/:username/:fileName", (req, res) => {
 app.get("/download/:username/:fileName", (req, res) => {
   const fname = req.params.fileName;
   try {
+    var content = fs.readFileSync(`./files/${fname}`);
+    //console.log(content);
     res.download(`./files/${fname}`);
-    res.status(200).json({ message: "File downloaded successfully" });
+    res.send(content);
+    res.end();
   } catch (error) {
     console.error("Error downloading file:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-  console.log(`User Uploaded File: ${fname}`);
+  console.log(`User Downloaded File: ${fname}`);
 });
 
 //   Making the Server Instead of -> app.listen(...)

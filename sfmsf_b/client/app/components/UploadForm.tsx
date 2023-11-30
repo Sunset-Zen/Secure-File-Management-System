@@ -162,7 +162,7 @@ export default UploadForm;
 //   data.append("image", fileData);
 
 //   // Response
-//   fetch("http://localhost:4000/upload", {
+//   fetch("https://localhost:4000/upload", {
 //     method: "POST",
 //     body: data,
 //   })
@@ -196,7 +196,7 @@ export default UploadForm;
 //     const data = new FormData();
 //     data.set("file", file);
 
-//     const res = await fetch("http://localhost:4000/upload", {
+//     const res = await fetch("https://localhost:4000/upload", {
 //       method: "POST",
 //       body: data,
 //     });
