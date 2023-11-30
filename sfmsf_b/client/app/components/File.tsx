@@ -41,21 +41,32 @@ function File(props: any) {
         style={{ height: "100px", margin: "1px" }}
       >
         {dud && (
+          <>
+            <button
+              className="border rounded-md"
+              style={{ width: "40px", height: "30px" }}
+              onClick={() => handleChange(id)}
+            >
+              <h1>x</h1>
+            </button>
+            <button
+              className="border rounded-md"
+              style={{ width: "40px", height: "30px" }}
+              onClick={() => downloadFile()}
+            >
+              <h1>d</h1>
+            </button>
+          </>
+        )}
+        {(du || d) && (
           <button
             className="border rounded-md"
             style={{ width: "40px", height: "30px" }}
-            onClick={() => handleChange(id)}
+            onClick={() => downloadFile()}
           >
-            <h1>x</h1>
+            <h1>d</h1>
           </button>
         )}
-        <button
-          className="border rounded-md"
-          style={{ width: "40px", height: "30px" }}
-          onClick={() => downloadFile()}
-        >
-          <h1>d</h1>
-        </button>
       </div>
     </div>
   );

@@ -11,14 +11,9 @@ const fs = require("fs");
 const app = express();
 const PORT = 5500;
 const filesDirectory = path.join(__dirname, "files");
-
-// const ojacks7 = path.join(__dirname, "ojacks7");
-// const tgeor7 = path.join(__dirname, "tgeor7");
-// const jdoe = path.join(__dirname, "jdoe");
-
-let userO = "o";
-let userT = "t";
-let userJ = "j";
+const oDirectory = path.join(__dirname, "ojacks7");
+const tDirectory = path.join(__dirname, "tgeor13");
+const jDirectory = path.join(__dirname, "jdoe");
 
 app.use(cors(corsConfig));
 app.use(express.json());
@@ -27,36 +22,48 @@ app.use(express.json());
 app.use(logger);
 
 let unique_ID = 0;
-// Get File Name
-let filename = "";
+let o_ID = 0;
+let t_ID = 0;
+let j_ID = 0;
 
 // ( Set Storage )
 const storage = multer.diskStorage({
   filename: function (req, file, cb) {
-    unique_ID++;
     // return cb(null, `${file.originalname}`); // ( By Name )
-    filename += file.originalname;
-    return cb(null, `${unique_ID}_${file.originalname}`); // ( By ID )
+    let username = req.params.username;
+    if (username.includes("ojacks7")) {
+      // let prev = o_ID;
+      o_ID++;
+      return cb(null, `${o_ID}_${file.originalname}`);
+    } else if (username.includes("tgeor13")) {
+      // let prev = t_ID;
+      t_ID++;
+      return cb(null, `${t_ID}_${file.originalname}`);
+    } else if (username.includes("jdoe")) {
+      // let prev = j_ID;
+      j_ID++;
+      return cb(null, `${j_ID}_${file.originalname}`);
+    }
   },
   destination: function (req, file, cb) {
-    // set destination logic here
-    return cb(null, "./files");
+    // set destination logic here -> based on username ( unsure )
+    let username = req.params.username;
+    if (username.includes("ojacks7")) {
+      return cb(null, "./ojacks7");
+    } else if (username.includes("tgeor13")) {
+      return cb(null, "./tgeor13");
+    } else if (username.includes("jdoe")) {
+      return cb(null, "./jdoe");
+    } else {
+      return cb(null, "./files");
+    }
   },
 });
+
+// ( Condition ) ? { ... } : { ... }
 const upload = multer({ storage });
 
 // ( Upload : POST Route(s) )
-// app.post("/username/:username", (req, res) => {
-//   const { message } = req.body;
-
-//   // Do something with the message (e.g., log it)
-//   console.log("Received message:", message);
-
-//   // Send a response back to the client
-//   res
-//     .status(200)
-//     .json({ success: true, message: "Message received successfully" });
-// });
 app.post("/login/:username", (req, res) => {
   const { message } = req.body;
 
@@ -86,18 +93,30 @@ app.post("/upload/:username/:fileName", upload.array("files"), (req, res) => {
   }
   const fname = req.params.fileName;
   console.log(`User Uploaded File: ${fname}`);
-
+  res.status(200).json({ message: "File(s) uploaded successfully" });
   console.log(req.files);
 });
 
 // ( Delete : DELETE Route(s) )
 app.delete("/delete/:username/:fileName", (req, res) => {
-  unique_ID--;
-  // const { message } = req.body;
   const fname = req.params.fileName;
+  let username = req.params.username;
+  let filePath = "";
+  if (username.includes("ojacks7")) {
+    o_ID--;
+    filePath += path.join(oDirectory, fname);
+  } else if (username.includes("tgeor13")) {
+    t_ID--;
+    filePath += path.join(tDirectory, fname);
+  } else if (username.includes("jdoe")) {
+    j_ID--;
+    filePath += path.join(jDirectory, fname);
+  } else {
+    unique_ID--;
+    filePath += path.join(filesDirectory, fname);
+  }
+
   console.log(`User Deleted File: ${fname}`);
-  // console.log(`Filename : ${fname}`);
-  const filePath = path.join(filesDirectory, fname);
 
   try {
     fs.unlinkSync(filePath);
@@ -107,7 +126,6 @@ app.delete("/delete/:username/:fileName", (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 // ( Download : GET Route(s) )
 app.get("/download/:username/:fileName", (req, res) => {
   const fname = req.params.fileName;
@@ -119,6 +137,11 @@ app.get("/download/:username/:fileName", (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
   console.log(`User Uploaded File: ${fname}`);
+});
+// ( Fetch : GET Route(s) )
+app.get("/ojacks7", (req, res) => {
+  req.files;
+  res.json({});
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

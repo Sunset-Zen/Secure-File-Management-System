@@ -14,7 +14,7 @@ function Home() {
   return (
     <div
       className="bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800 text-white-500"
-      style={{ height: "800px" }}
+      style={{ height: "800px", width: "1440px", overflowX: "scroll" }}
     >
       <h1 className="text-xl font-semibold text-white">{title}</h1>
 
