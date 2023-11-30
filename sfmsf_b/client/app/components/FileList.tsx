@@ -19,6 +19,7 @@ function FileList(props: any) {
     id: counter + 1,
     name: "",
     active: true,
+    username: username,
   });
   let prevNum = counter + 1;
 
@@ -28,13 +29,13 @@ function FileList(props: any) {
   const [d, setD] = useState(props.limitedD); // Limited Access ( Download )
   const [n, setN] = useState(false); // No Access ( * Restricted * )
 
-  // Update Render Function
+  // Update / Debug Render Function
   useEffect(() => {
     // ( Debug Attributes )
-    console.log("File Item :", fileItem);
-    console.log("Display Files :", displayFiles);
-    console.log("Global Counter :", counter);
-    console.log("Selected Files Length: ", selectedFiles?.length);
+    // console.log("File Item :", fileItem);
+    // console.log("Display Files :", displayFiles);
+    // console.log("Global Counter :", counter);
+    // console.log("Selected Files Length: ", selectedFiles?.length);
   }, [selectedFiles, referenceList, fileList, fileNames, fileItem]);
 
   // Functions : ( Application Functionality )
@@ -45,45 +46,68 @@ function FileList(props: any) {
   }; // ( setSelectedFiles == to input )
 
   const uploadFile = (list: any) => {
+    // Send Username to Back End
+    // sendUsername();
+
     // ( Frontend ) : Render Logic (Multiple File Upload)
     if (list.length > 1) {
       let templist: any[] = [];
       for (let x = 0; x < list.length; x++) {
         setCount((prev) => prev + 1);
+        let backendname = `${username[0]}${list[x].name}`;
         let temp = {
           id: prevNum + x,
           name: list[x].name,
+          user: username,
           active: true,
         };
         templist.push(temp);
         setFileItem((prev: any) => (prev = temp));
       }
       setDisplayFiles([...displayFiles, ...templist]);
+      let filelist = "Multiple_Files";
+
+      // ( Backend ) : Begin Backend POST
+      const formData = new FormData();
+      Object.keys(list).forEach((key: any) => {
+        if (list) {
+          formData.append("files", list[key]);
+        }
+      });
+      axios
+        .post(`http://localhost:5500/upload/${username}/${filelist}`, formData)
+        .then((res) => {})
+        .catch((er) => console.log(er));
     } else {
       // ( Frontend ) : Render Logic (Single File Upload)
       setCount((prev) => prev + 1);
+      let backendname = `${username[0]}${list[0].name}`;
       let temp = {
         id: counter + 1,
         name: list[0].name,
         active: true,
+        user: username,
       };
       setFileItem((prev: any) => (prev = temp));
       let templist: any[] = [];
       templist.push(temp);
       setDisplayFiles([...displayFiles, ...templist]);
-    }
 
-    // ( Backend ) : Begin Backend POST
-    const formData = new FormData();
-    Object.keys(list).forEach((key: any) => {
-      if (list) {
-        formData.append("files", list[key]);
-      }
-    });
-    axios
-      .post("http://localhost:5500/upload", formData)
-      .then((res) => {})
-      .catch((er) => console.log(er));
+      // ( Backend ) : Begin Backend POST
+      const formData = new FormData();
+      Object.keys(list).forEach((key: any) => {
+        if (list) {
+          formData.append("files", list[key]);
+        }
+      });
+      axios
+        .post(
+          `http://localhost:5500/upload/${username}/${list[0].name}`,
+          formData
+        )
+        .then((res) => {})
+        .catch((er) => console.log(er));
+    }
 
     // ( Alert )
     list.length > 1
@@ -112,14 +136,13 @@ function FileList(props: any) {
     // ( Backend ): Begin Backend DELETE Logic
     try {
       const response = await axios.delete(
-        `http://localhost:5500/delete/${target}_${tempA}`
+        `http://localhost:5500/delete/${username}/${target}_${tempA}`
       );
       console.log("File deleted successfully:", response.data);
     } catch (error) {
       console.error("Error deleting file:", error);
     }
   }; // ( Function ) : Delete File
-
   const downloadFile = async (index: any) => {
     // ( Frontend ): Render Logic
     let tempA: string = "";
@@ -137,7 +160,7 @@ function FileList(props: any) {
     // ( Backend ): Begin Backend DOWNLOAD Logic
     try {
       const response = await axios({
-        url: `http://localhost:5500/download/${index}_${tempA}`,
+        url: `http://localhost:5500/download/${username}/${index}_${tempA}`,
         method: "GET",
         responseType: "blob",
       });

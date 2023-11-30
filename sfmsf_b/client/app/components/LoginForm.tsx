@@ -19,20 +19,25 @@ function LoginForm(props: any) {
 
   // Functions
   function onHandleFormSubmit(data: TFormValues) {
-    console.log(`Username: ${user} \t Password: ${pass}`);
+    // console.log(`Username: ${user} \t Password: ${pass}`);
     changeUsername(user);
     changePassword(pass);
-    toNextPage();
-
-    // ( Log / Audit Action )
-    let str = `User Verified Login:\t${user}\t${pass}`;
-    // axios
-    //   .post("http://localhost:5500/upload", str)
-    //   .then((res) => {})
-    //   .catch((er) => console.log(er));
+    recordLogin(); // Log / Audit Login
+    toNextPage(); // Continue to Next Page
 
     // ( Run Credentials Through LDAP )
   }
+  const recordLogin = async () => {
+    try {
+      const response = await axios.post(`http://localhost:5500/login/${user}`, {
+        message: user,
+      });
+      // Handle the response from the server
+      console.log("Server response:", response.data);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
 
   // TSX
   return (
