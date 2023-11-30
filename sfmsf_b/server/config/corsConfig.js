@@ -2,7 +2,7 @@
 // -> Establish path our Client uses to recieve data from Server
 
 // Attribute(s)
-const clientLocation = "http://localhost:3000";
+const clientLocation = "https://localhost:3000";
 
 // Function(s)
 const corsConfig = {

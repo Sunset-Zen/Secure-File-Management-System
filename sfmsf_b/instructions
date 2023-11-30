@@ -1,0 +1,6 @@
+LDAP:
+    sudo node ldap-server.js
+Server:
+    npm start
+Client:
+    npm run dev

@@ -1,0 +1,15 @@
+{
+  "name": "ldap",
+  "version": "1.0.0",
+  "description": "ldap functionality",
+  "main": "ldap-test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ldap-test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ldapjs": "^3.0.5"
+  }
+}

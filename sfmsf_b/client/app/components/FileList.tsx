@@ -102,12 +102,13 @@ function FileList(props: any) {
       });
       axios
         .post(
-          `http://localhost:5500/upload/${username}/${list[0].name}`,
+          `https://localhost:5500/upload/${username}/${list[0].name}`,
           formData
         )
         .then((res) => {})
         .catch((er) => console.log(er));
     }
+
 
     // ( Alert )
     list.length > 1
@@ -136,7 +137,7 @@ function FileList(props: any) {
     // ( Backend ): Begin Backend DELETE Logic
     try {
       const response = await axios.delete(
-        `http://localhost:5500/delete/${username}/${target}_${tempA}`
+        `https://localhost:5500/delete/${username}/${target}_${tempA}`
       );
       console.log("File deleted successfully:", response.data);
     } catch (error) {
