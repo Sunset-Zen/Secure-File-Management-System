@@ -13,6 +13,15 @@ const https = require('https');
 const app = express();
 const PORT = 5500;
 const filesDirectory = path.join(__dirname, "files");
+
+// const ojacks7 = path.join(__dirname, "ojacks7");
+// const tgeor7 = path.join(__dirname, "tgeor7");
+// const jdoe = path.join(__dirname, "jdoe");
+
+let userO = "o";
+let userT = "t";
+let userJ = "j";
+
 //app.use(cors(corsConfig));
 app.use(cors({
   origin: 'https://localhost:3000',
@@ -22,41 +31,83 @@ app.use(cors({
 //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
 //   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
 // })
+
 app.use(express.json());
 
 // ( Custom Middleware )
 app.use(logger);
 
 let unique_ID = 0;
+// Get File Name
+let filename = "";
 
 // ( Set Storage )
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    return cb(null, "./files");
-  },
   filename: function (req, file, cb) {
     unique_ID++;
     // return cb(null, `${file.originalname}`); // ( By Name )
+    filename += file.originalname;
     return cb(null, `${unique_ID}_${file.originalname}`); // ( By ID )
+  },
+  destination: function (req, file, cb) {
+    // set destination logic here
+    return cb(null, "./files");
   },
 });
 const upload = multer({ storage });
 
-// ( Upload : POST Route )
-app.post("/upload", upload.array("files"), (req, res) => {
+// ( Upload : POST Route(s) )
+// app.post("/username/:username", (req, res) => {
+//   const { message } = req.body;
+
+//   // Do something with the message (e.g., log it)
+//   console.log("Received message:", message);
+
+//   // Send a response back to the client
+//   res
+//     .status(200)
+//     .json({ success: true, message: "Message received successfully" });
+// });
+app.post("/login/:username", (req, res) => {
+  const { message } = req.body;
+
+  // Do something with the message (e.g., log it)
+  console.log("User Logged In:", message);
+
+  // Send a response back to the client
+  res
+    .status(200)
+    .json({ success: true, message: `${message} logged in successfully` });
+});
+app.post("/logout/:username", (req, res) => {
+  const { message } = req.body;
+
+  // Do something with the message (e.g., log it)
+  console.log("User Logged Out:", message);
+
+  // Send a response back to the client
+  res
+    .status(200)
+    .json({ success: true, message: `${message} logged out successfully` });
+});
+app.post("/upload/:username/:fileName", upload.array("files"), (req, res) => {
   // As I iterate through uploaded files add a unique ID Key
   for (let i = 0; i < req.files.length; i++) {
     req.files[i].uid = i + 1;
   }
+  const fname = req.params.fileName;
+  console.log(`User Uploaded File: ${fname}`);
+
   console.log(req.files);
-  console.log(req.body.uid);
 });
 
-// ( Delete : DELETE Route )
-app.delete("/delete/:fileName", (req, res) => {
+// ( Delete : DELETE Route(s) )
+app.delete("/delete/:username/:fileName", (req, res) => {
   unique_ID--;
+  // const { message } = req.body;
   const fname = req.params.fileName;
-  console.log(`Filename : ${fname}`);
+  console.log(`User Deleted File: ${fname}`);
+  // console.log(`Filename : ${fname}`);
   const filePath = path.join(filesDirectory, fname);
 
   try {
@@ -68,6 +119,20 @@ app.delete("/delete/:fileName", (req, res) => {
   }
 });
 
+// ( Download : GET Route(s) )
+app.get("/download/:username/:fileName", (req, res) => {
+  const fname = req.params.fileName;
+  try {
+    res.download(`./files/${fname}`);
+    res.status(200).json({ message: "File downloaded successfully" });
+  } catch (error) {
+    console.error("Error downloading file:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+  console.log(`User Uploaded File: ${fname}`);
+});
+
+//   Making the Server Instead of -> app.listen(...)
 var httpsOptions = {
   key: fs.readFileSync('PKI/client-key.pem'),
   cert: fs.readFileSync('PKI/client-cert.pem')

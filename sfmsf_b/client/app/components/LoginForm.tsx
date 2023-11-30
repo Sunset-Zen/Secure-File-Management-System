@@ -19,10 +19,11 @@ function LoginForm(props: any) {
 
   // Functions
   function onHandleFormSubmit(data: TFormValues) {
-    console.log(`Username: ${user} \t Password: ${pass}`);
+    // console.log(`Username: ${user} \t Password: ${pass}`);
     changeUsername(user);
     changePassword(pass);
     
+    // ( Run Credentials Through LDAP )
     axios
        .post("https://localhost:5500/login", {
         username:user,
@@ -31,7 +32,8 @@ function LoginForm(props: any) {
        .then((res) => {
         //console.log(res);
         if(res.status == 200){
-          toNextPage();
+          recordLogin(); // Log / Audit Login
+          toNextPage(); // Continue to Next Page
         }
         else if(res.status == 403){
           console.log("Invalid login credentials");
@@ -43,8 +45,18 @@ function LoginForm(props: any) {
     // ( Log / Audit Action )
     //toNextPage();
     let str = `User Verified Login:\t${user}\t${pass}`;
-    
   }
+  const recordLogin = async () => {
+    try {
+      const response = await axios.post(`http://localhost:5500/login/${user}`, {
+        message: user,
+      });
+      // Handle the response from the server
+      console.log("Server response:", response.data);
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
 
   // TSX
   return (

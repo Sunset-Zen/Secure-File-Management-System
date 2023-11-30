@@ -6,6 +6,11 @@ function File(props: any) {
   const [id, setID] = useState<number>(props.uid);
   const [active, setActive] = useState<boolean>(props.active);
 
+  const [dud, setDUD] = useState(props.dud); // Full Access ( Download, Upload, Delete )
+  const [du, setDU] = useState(props.du); // Limited Access ( Download, Upload )
+  const [d, setD] = useState(props.d); // Limited Access ( Download )
+  const [n, setN] = useState(props.n); // No Access ( * Restricted * )
+
   // Functions
   const handleChange = (target: any) => {
     setActive(false);
@@ -13,6 +18,9 @@ function File(props: any) {
     alert(`You deleted ${name} with ID : ${id}`);
     props.rmvfile(id); // works ( better ) (ID) -> under progress....
     // props.rmvfile(name); // ( fileName )
+  };
+  const downloadFile = () => {
+    props.dwldfile(id);
   };
 
   // TSX
@@ -32,12 +40,21 @@ function File(props: any) {
         className="grid rounded-md"
         style={{ height: "100px", margin: "1px" }}
       >
+        {dud && (
+          <button
+            className="border rounded-md"
+            style={{ width: "40px", height: "30px" }}
+            onClick={() => handleChange(id)}
+          >
+            <h1>x</h1>
+          </button>
+        )}
         <button
           className="border rounded-md"
           style={{ width: "40px", height: "30px" }}
-          onClick={() => handleChange(id)}
+          onClick={() => downloadFile()}
         >
-          <h1>D</h1>
+          <h1>d</h1>
         </button>
       </div>
     </div>

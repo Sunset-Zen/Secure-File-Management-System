@@ -9,7 +9,8 @@ const path = require("path");
 
 const logEvents = async (message, logName) => {
   const dateTime = `${format(new Date(), "yyyyMMdd\tHH:mm:ss")}`;
-  const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
+  // const logItem = `${dateTime}\t${uuid()}\t${message}\n`;
+  const logItem = `${dateTime}\t${message}\n`;
 
   try {
     // If the logs directory doesn't exist -> create directory logs
@@ -30,6 +31,9 @@ const logEvents = async (message, logName) => {
 const logger = (req, res, next) => {
   // message , file to create or write to
   // (message, filename)
+  // if(req.method == 'POST' && req.path == '/login'){
+  //   logEvents(``)
+  // }
   logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, "reqLog.txt");
   console.log(`${req.method} ${req.path}`);
   next();
