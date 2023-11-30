@@ -51,7 +51,7 @@ function FileMenu() {
 
       {/* Display Available Files  */}
       <section className="flex-col gap-10">
-        {/* Avaialable Files */}
+        {/* Avaialable : Personal Files */}
         <div className="mt-10">
           {/* Title */}
           <div className="">
@@ -65,50 +65,41 @@ function FileMenu() {
           </div>
         </div>
 
-        <div className="flex gap-6">
+        <div
+          style={{
+            width: "1440px",
+            // height: "250px",
+            display: "flex",
+            border: "1px solid green",
+            overflowX: "scroll",
+            marginTop: "20px",
+            paddingBottom: "40px",
+          }}
+        >
           {/* Read & Edit Files */}
-          <div className="mt-10">
-            {/* Title */}
-            <div>
-              {/* Access Control : Render */}
-              {username == "ojacks7" ? (
-                <h1 className="text-white text-lg font-semibold">
-                  tgeor13 Files (D.U)
-                </h1>
-              ) : username == "tgeor13" ? (
-                <h1 className="text-white text-lg  font-semibold">
-                  jdoe Files (D.U)
-                </h1>
-              ) : username == "jdoe" ? (
-                <h1 className="text-white text-lg font-semibold">
-                  ojacks7 Files (D.U)
-                </h1>
-              ) : (
-                <h1 className="text-white font-semibold">Files (D.U)</h1>
-              )}
-            </div>
-            {/* File List */}
-            <div className="mt-2">
-              <FileList fullAccess={false} limitedDU={true} />
-            </div>
-          </div>
 
           {/* Download Only Files */}
-          <div className="mt-10">
+          <div
+            className="mt-10"
+            style={{
+              display: "absolute",
+              right: "300px",
+            }}
+          >
             {/* Title */}
             <div>
               {/* Access Control : Render */}
               {username == "ojacks7" ? (
                 <h1 className="text-white text-lg font-semibold">
-                  tgeor13 Files (D)
+                  tgeor13 Files (Full Access)
                 </h1>
               ) : username == "tgeor13" ? (
                 <h1 className="text-white text-lg  font-semibold">
-                  jdoe Files (D)
+                  jdoe Files (Limited Access)
                 </h1>
               ) : username == "jdoe" ? (
                 <h1 className="text-white text-lg font-semibold">
-                  ojacks7 Files (D)
+                  tgeor13 Files (Limited Access)
                 </h1>
               ) : (
                 <h1 className="text-white font-semibold">Files (D.U)</h1>
@@ -116,26 +107,26 @@ function FileMenu() {
             </div>
             {/* File List */}
             <div className="mt-2">
-              <FileList fullAccess={false} />
+              <FileList fullAccess={false} limitedD={true} />
             </div>
           </div>
 
-          {/* Unavailable Files */}
+          {/* Unavailable || 3rd User Files */}
           <div className="mt-10">
             {/* Title */}
             <div>
               {/* Access Control : Render */}
               {username == "ojacks7" ? (
                 <h1 className="text-white text-lg font-semibold">
-                  jdoe Files (No Access)
+                  jdoe Files (Full Access)
                 </h1>
               ) : username == "tgeor13" ? (
                 <h1 className="text-white text-lg  font-semibold">
-                  ojacks7 Files (No Access)
+                  ojacks7 Files (Limited Access)
                 </h1>
               ) : username == "jdoe" ? (
                 <h1 className="text-white text-lg font-semibold">
-                  tgeor13 Files (No Access)
+                  ojacks7 Files (No Access)
                 </h1>
               ) : (
                 <h1 className="text-white font-semibold">Files (No Access)</h1>
@@ -143,7 +134,11 @@ function FileMenu() {
             </div>
             {/* File List */}
             <div className="mt-2">
-              <FileList fullAccess={false} />
+              {username === "ojacks7" ? (
+                <FileList limitedN={true} />
+              ) : (
+                <FileList fullAccess={false} limitedN={true} />
+              )}
             </div>
           </div>
         </div>

@@ -8,35 +8,42 @@ function FileList(props: any) {
   const [fileNames, setFileNames] = useState<string[]>([]); // change ???
   const [fileList, setFileList] = useState<any[]>([]);
   const [referenceList, setReference] = useState<any[]>([]);
-  const [count, setCount] = useState<number>(0);
-  const { username } = useSystemState();
+  const [count, setCount] = useState<number>(1);
+  const { username, ofiles, tfiles, jfiles, setOfiles, setTfiles, setJfiles } =
+    useSystemState();
 
   const [selectedFiles, setSelectedFiles] = useState<FileList>(); // Send to the backend
   let counter: number | undefined = count;
 
   const [displayFiles, setDisplayFiles] = useState<any[]>([]); // Display on the frontend
   const [fileItem, setFileItem] = useState<any>({
-    id: counter + 1,
+    id: counter,
     name: "",
     active: true,
     username: username,
   });
-  let prevNum = counter + 1;
 
   // Permissions ( D.U.D )
   const [dud, setDUD] = useState(props.fullAccess); // Full Access ( Download, Upload, Delete )
   const [du, setDU] = useState(props.limitedDU); // Limited Access ( Download, Upload )
   const [d, setD] = useState(props.limitedD); // Limited Access ( Download )
-  const [n, setN] = useState(false); // No Access ( * Restricted * )
+  const [n, setN] = useState(props.limitedN); // No Access ( * Restricted * )
 
   // Update / Debug Render Function
   useEffect(() => {
     // ( Debug Attributes )
     // console.log("File Item :", fileItem);
     // console.log("Display Files :", displayFiles);
+    console.log("Global ojacks7 Files :", ofiles);
+    // console.log("Global tgeor13 Files :", tfiles);
+    // console.log("Global jdoe Files :", jfiles);
     // console.log("Global Counter :", counter);
     // console.log("Selected Files Length: ", selectedFiles?.length);
   }, [selectedFiles, referenceList, fileList, fileNames, fileItem]);
+
+  useEffect(() => {
+    //
+  }, []);
 
   // Functions : ( Application Functionality )
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,17 +53,14 @@ function FileList(props: any) {
   }; // ( setSelectedFiles == to input )
 
   const uploadFile = (list: any) => {
-    // Send Username to Back End
-    // sendUsername();
-
     // ( Frontend ) : Render Logic (Multiple File Upload)
     if (list.length > 1) {
       let templist: any[] = [];
       for (let x = 0; x < list.length; x++) {
         setCount((prev) => prev + 1);
-        let backendname = `${username[0]}${list[x].name}`;
+        // Temporary Object Buffer
         let temp = {
-          id: prevNum + x,
+          id: counter + x,
           name: list[x].name,
           user: username,
           active: true,
@@ -65,6 +69,16 @@ function FileList(props: any) {
         setFileItem((prev: any) => (prev = temp));
       }
       setDisplayFiles([...displayFiles, ...templist]);
+      // Access Control
+      if (username === "ojacks7") {
+        setOfiles([...ofiles, ...templist]);
+      } else if (username === "tgeor13") {
+        setTfiles([...tfiles, ...templist]);
+      } else if (username === "jdoe") {
+        setJfiles([...jfiles, ...templist]);
+      } else {
+        console.log("Invalid user : not verified account list for you");
+      }
       let filelist = "Multiple_Files";
 
       // ( Backend ) : Begin Backend POST
@@ -76,14 +90,16 @@ function FileList(props: any) {
       });
       axios
         .post(`https://localhost:5500/upload/${username}/${filelist}`, formData)
-        .then((res) => {})
+        .then((res) => {
+          console.log("Files uploaded successfully:", res.data);
+        })
         .catch((er) => console.log(er));
     } else {
       // ( Frontend ) : Render Logic (Single File Upload)
       setCount((prev) => prev + 1);
-      let backendname = `${username[0]}${list[0].name}`;
+      // let backendname = `${username[0]}${list[0].name}`;
       let temp = {
-        id: counter + 1,
+        id: counter,
         name: list[0].name,
         active: true,
         user: username,
@@ -92,6 +108,17 @@ function FileList(props: any) {
       let templist: any[] = [];
       templist.push(temp);
       setDisplayFiles([...displayFiles, ...templist]);
+
+      // Access Control
+      if (username === "ojacks7") {
+        setOfiles([...ofiles, ...templist]);
+      } else if (username === "tgeor13") {
+        setTfiles([...tfiles, ...templist]);
+      } else if (username === "jdoe") {
+        setJfiles([...jfiles, ...templist]);
+      } else {
+        console.log("Invalid user : not verified account list for you");
+      }
 
       // ( Backend ) : Begin Backend POST
       const formData = new FormData();
@@ -105,7 +132,9 @@ function FileList(props: any) {
           `https://localhost:5500/upload/${username}/${list[0].name}`,
           formData
         )
-        .then((res) => {})
+        .then((res) => {
+          console.log("Files uploaded successfully:", res.data);
+        })
         .catch((er) => console.log(er));
     }
 
@@ -118,21 +147,86 @@ function FileList(props: any) {
   const removeFile = async (target: number) => {
     // ( Frontend ): Render Logic
     let tempA: string = "";
-    if (displayFiles.length > 1) {
-      for (let i = 0; i < displayFiles.length; i++) {
-        if (i + 1 === target) {
-          tempA = displayFiles[i].name;
+
+    // Access Control -> method
+    if (username === "ojacks7") {
+      if (ofiles.length > 1) {
+        for (let i = 0; i < ofiles.length; i++) {
+          if (i === target) {
+            // changed
+            tempA = displayFiles[i].name;
+          }
         }
+      } else {
+        tempA = ofiles[0].name; // unsure
       }
+      console.log(`Target Object : ${tempA}`);
+      setCount((prev) => prev - 1);
+      setOfiles((prev) => {
+        return prev.filter((file: any) => file.id !== target);
+      });
+    } else if (username === "tgeor13") {
+      if (tfiles.length > 1) {
+        for (let i = 0; i < tfiles.length; i++) {
+          if (i === target) {
+            // changed
+            tempA = tfiles[i].name;
+          }
+        }
+      } else {
+        tempA = tfiles[0].name; // unsure
+      }
+      console.log(`Target Object : ${tempA}`);
+      setCount((prev) => prev - 1);
+      setTfiles((prev) => {
+        return prev.filter((file: any) => file.id !== target);
+      });
+    } else if (username === "jdoe") {
+      if (jfiles.length > 1) {
+        for (let i = 0; i < jfiles.length; i++) {
+          if (i === target) {
+            // changed
+            tempA = jfiles[i].name;
+          }
+        }
+      } else {
+        tempA = jfiles[0].name; // unsure
+      }
+      console.log(`Target Object : ${tempA}`);
+      setCount((prev) => prev - 1);
+      setJfiles((prev) => {
+        return prev.filter((file: any) => file.id !== target);
+      });
     } else {
-      tempA = displayFiles[0].name; // unsure
+      console.log("Invalid user : not verified account list for you");
     }
 
-    console.log(`Target Object : ${tempA}`);
-    setCount((prev) => prev - 1);
-    setDisplayFiles((prev) => {
-      return prev.filter((file) => file.id !== target);
-    });
+    // if (displayFiles.length > 1) {
+    //   for (let i = 0; i < displayFiles.length; i++) {
+    //     if (i === target) {
+    //       // changed
+    //       tempA = displayFiles[i].name;
+    //     }
+    //   }
+    // } else {
+    //   tempA = displayFiles[0].name; // unsure
+    // }
+
+    // setCount((prev) => prev - 1);
+    // setDisplayFiles((prev) => {
+    //   return prev.filter((file) => file.id !== target);
+    // });
+
+    // Access Control
+    // if (username === "ojacks7") {
+    //   setOfiles([...displayFiles]);
+    // } else if (username === "tgeor13") {
+    //   setTfiles([...displayFiles]);
+    // } else if (username === "jdoe") {
+    //   setJfiles([...displayFiles]);
+    // } else {
+    //   console.log("Invalid user : not verified account list for you");
+    // }
 
     // ( Backend ): Begin Backend DELETE Logic
     try {
@@ -147,16 +241,53 @@ function FileList(props: any) {
   const downloadFile = async (index: any) => {
     // ( Frontend ): Render Logic
     let tempA: string = "";
-    if (displayFiles.length > 1) {
-      for (let i = 0; i < displayFiles.length; i++) {
-        if (i + 1 === index) {
-          tempA = displayFiles[i].name;
+
+    // Access Control -> method
+    if (username === "ojacks7") {
+      if (ofiles.length > 1) {
+        for (let i = 0; i < ofiles.length; i++) {
+          if (i + 1 === index) {
+            tempA = ofiles[i].name;
+          }
         }
+      } else {
+        tempA = ofiles[0].name; // unsure
       }
+      alert(`${username} downloaded ${tempA} with ID : ${index}`);
+    } else if (username === "tgeor13") {
+      if (tfiles.length > 1) {
+        for (let i = 0; i < tfiles.length; i++) {
+          if (i + 1 === index) {
+            tempA = tfiles[i].name;
+          }
+        }
+      } else {
+        tempA = tfiles[0].name; // unsure
+      }
+      alert(`${username} downloaded ${tempA} with ID : ${index}`);
+    } else if (username === "jdoe") {
+      if (jfiles.length > 1) {
+        for (let i = 0; i < jfiles.length; i++) {
+          if (i + 1 === index) {
+            tempA = jfiles[i].name;
+          }
+        }
+      } else {
+        tempA = jfiles[0].name; // unsure
+      }
+      alert(`${username} downloaded ${tempA} with ID : ${index}`);
     } else {
-      tempA = displayFiles[0].name; // unsure
+      if (displayFiles.length > 1) {
+        for (let i = 0; i < displayFiles.length; i++) {
+          if (i + 1 === index) {
+            tempA = displayFiles[i].name;
+          }
+        }
+      } else {
+        tempA = displayFiles[0].name; // unsure
+      }
+      alert(`${username} downloaded ${tempA} with ID : ${index}`);
     }
-    alert(`${username} downloaded ${tempA} with ID : ${index}`);
 
     // ( Backend ): Begin Backend DOWNLOAD Logic
     try {
@@ -174,6 +305,8 @@ function FileList(props: any) {
       link.setAttribute("download", `${index}_${tempA}`); // Replace with the desired filename
       document.body.appendChild(link);
       link.click();
+
+      console.log("File downloaded successfully:", response.data);
     } catch (error) {
       console.error("Error downloading file:", error);
     }
@@ -198,7 +331,11 @@ function FileList(props: any) {
 
   // TSX
   return (
-    <section className="flex">
+    <section
+      style={{
+        display: "flex",
+      }}
+    >
       <ul
         className="border-4 rounded-md border-grey-800 px-10 relative"
         style={{
@@ -209,8 +346,225 @@ function FileList(props: any) {
           gap: "10px",
         }}
       >
-        {/* ( New Render ) : Iterate through reference list and render : Object Based */}
-        {displayFiles.map((file: any, index) =>
+        {/* ( Access Control Render ) : Iterate through each user list and render : Object Based */}
+        {dud && username === "ojacks7" ? (
+          ofiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ))
+        ) : dud && username === "tgeor13" ? (
+          tfiles.map((file: any, index) => (
+            <div key={file.id}>
+              {" "}
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ))
+        ) : dud && username === "jdoe" ? (
+          jfiles.map((file: any, index) => (
+            <div key={file.id}>
+              {" "}
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ))
+        ) : d && username === "ojacks7" ? (
+          tfiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ))
+        ) : d && username === "tgeor13" ? (
+          jfiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                d={true}
+              />
+            </div>
+          ))
+        ) : d && username === "jdoe" ? (
+          tfiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                d={true}
+              />
+            </div>
+          ))
+        ) : n && username === "ojacks7" ? (
+          jfiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                dud={true}
+              />
+            </div>
+          ))
+        ) : n && username === "tgeor13" ? (
+          ofiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                d={true}
+              />
+            </div>
+          ))
+        ) : n && username === "jdoe" ? (
+          ofiles.map((file: any, index) => (
+            <div key={file.id}>
+              <File
+                filename={file.name}
+                uid={file.id}
+                active={file.active}
+                rmvfile={removeFile}
+                dwldfile={downloadFile}
+                n={true}
+              />
+            </div>
+          ))
+        ) : (
+          <div></div>
+        )}
+      </ul>
+      {/* Full Access */}
+      {dud && (
+        <div
+          className="flex ml-5"
+          style={{
+            height: "200px",
+            display: "relative",
+          }}
+        >
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              uploadFile(selectedFiles);
+            }}
+          >
+            <input
+              type="file"
+              name="files"
+              accept="image/*"
+              multiple
+              onChange={handleFileChange}
+            />
+            <button
+              type="submit"
+              style={{
+                position: "relative",
+                right: "340px",
+                top: "50px",
+              }}
+              className="border-grey-700 border-2 rounded-md text-white bg-black px-6"
+            >
+              Upload
+            </button>
+          </form>
+        </div>
+      )}
+      {/* Limited Access : Download and Upload*/}
+      {du && (
+        <div
+          className="ml-5"
+          style={{
+            height: "200px",
+            display: "relative",
+            width: "240px",
+          }}
+        ></div>
+      )}
+      {/* Limited Access : Download Only */}
+      {d && username === "ojacks7" ? (
+        <div
+          className=" ml-5"
+          style={{
+            height: "200px",
+            display: "relative",
+            width: "240px",
+          }}
+        ></div>
+      ) : (
+        <div
+          className=""
+          style={{
+            height: "200px",
+            display: "relative",
+            width: "240px",
+          }}
+        ></div>
+      )}
+      {/* No Access */}
+      {n && username === "ojacks7" ? (
+        <div
+          className=" ml-5"
+          style={{
+            height: "200px",
+            display: "relative",
+            width: "240px",
+          }}
+        ></div>
+      ) : (
+        <div
+          className=""
+          style={{
+            height: "200px",
+            display: "relative",
+            width: "240px",
+          }}
+        ></div>
+      )}
+    </section>
+  );
+}
+
+export default FileList;
+
+{
+  /* {displayFiles.map((file: any, index) =>
           dud ? (
             <div key={file.id}>
               <File
@@ -257,92 +611,5 @@ function FileList(props: any) {
               </div>
             )
           )
-        )}
-      </ul>
-      {/* Full Access */}
-      {dud && (
-        <div
-          className="flex ml-5"
-          style={{
-            height: "200px",
-            display: "relative",
-          }}
-        >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // uploadFiles();
-              uploadFile(selectedFiles);
-            }}
-          >
-            <input
-              type="file"
-              name="files"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-            />
-            <button
-              type="submit"
-              style={{
-                position: "relative",
-                right: "340px",
-                top: "50px",
-              }}
-              className="border-grey-700 border-2 rounded-md text-white bg-black px-6"
-            >
-              Upload
-            </button>
-          </form>
-        </div>
-      )}
-      {/* Limited Access */}
-      {du && (
-        <div
-          className=" ml-5"
-          style={{
-            height: "200px",
-            display: "relative",
-            // border: "1px solid green",
-            width: "240px",
-          }}
-        >
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              // uploadFiles();
-              uploadFile(selectedFiles);
-            }}
-            style={{
-              // border: "1px solid blue",
-              height: "80px",
-              width: "100%",
-              // display: "flex",
-            }}
-          >
-            <input
-              type="file"
-              name="files"
-              accept="image/*"
-              multiple
-              onChange={handleFileChange}
-            />
-            <button
-              type="submit"
-              style={{
-                position: "relative",
-                // right: "333px",
-                top: "20px",
-              }}
-              className="border-grey-700 border-2 rounded-md text-white bg-black px-6"
-            >
-              Upload
-            </button>
-          </form>
-        </div>
-      )}
-    </section>
-  );
+        )} */
 }
-
-export default FileList;

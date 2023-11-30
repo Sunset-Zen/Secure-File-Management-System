@@ -19,7 +19,6 @@ function LoginForm(props: any) {
 
   // Functions
   function onHandleFormSubmit(data: TFormValues) {
-    // console.log(`Username: ${user} \t Password: ${pass}`);
     changeUsername(user);
     changePassword(pass);
     

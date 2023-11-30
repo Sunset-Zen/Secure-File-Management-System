@@ -1,5 +1,4 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import LoginForm from "./LoginForm";
 
 // Declare Shared Global System Variable Types
 interface IFormContext {
@@ -7,18 +6,30 @@ interface IFormContext {
   toLastPage: () => void;
   changeUsername: (text: string) => void;
   changePassword: (text: string) => void;
+  setOfiles: ([]) => void;
+  setTfiles: ([]) => void;
+  setJfiles: ([]) => void;
   page: number;
   username: string;
   password: string;
+  ofiles: any[];
+  tfiles: any[];
+  jfiles: any[];
 }
 const SystemContext = createContext<IFormContext>({
   toNextPage: () => {},
   toLastPage: () => {},
   changeUsername: () => {},
   changePassword: () => {},
+  setOfiles: () => {},
+  setTfiles: () => {},
+  setJfiles: () => {},
   page: 1,
   username: "",
   password: "",
+  ofiles: [],
+  tfiles: [],
+  jfiles: [],
 });
 
 // Iprops => enables me to pass in children parameters in FormProvider
@@ -30,6 +41,9 @@ export function SystemContextProvider({ children }: IProps) {
   const [page, setPage] = useState(1);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [ofiles, setOfiles] = useState<any[]>([]);
+  const [tfiles, setTfiles] = useState<any[]>([]);
+  const [jfiles, setJfiles] = useState<any[]>([]);
 
   // Functions || Logic
   function toNextPage(): void {
@@ -57,6 +71,12 @@ export function SystemContextProvider({ children }: IProps) {
         changePassword,
         username,
         password,
+        ofiles,
+        setOfiles,
+        tfiles,
+        setTfiles,
+        jfiles,
+        setJfiles,
       }}
     >
       {children}
