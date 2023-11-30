@@ -21,14 +21,33 @@ function LoginForm(props: any) {
   function onHandleFormSubmit(data: TFormValues) {
     changeUsername(user);
     changePassword(pass);
-    recordLogin(); // Log / Audit Login
-    toNextPage(); // Continue to Next Page
+    
+    // ( Run Credentials Through LDAP )
+    axios
+       .post("https://localhost:5500/login", {
+        username:user,
+        password:pass
+       })
+       .then((res) => {
+        //console.log(res);
+        if(res.status == 200){
+          recordLogin(); // Log / Audit Login
+          toNextPage(); // Continue to Next Page
+        }
+        else if(res.status == 403){
+          console.log("Invalid login credentials");
+        }
+       })
+       .catch((er) => console.log(er));
 
     // ( Run Credentials Through LDAP )
+    // ( Log / Audit Action )
+    //toNextPage();
+    let str = `User Verified Login:\t${user}\t${pass}`;
   }
   const recordLogin = async () => {
     try {
-      const response = await axios.post(`http://localhost:5500/login/${user}`, {
+      const response = await axios.post(`https://localhost:5500/login/${user}`, {
         message: user,
       });
       // Handle the response from the server

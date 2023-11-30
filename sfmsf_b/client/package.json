@@ -13,8 +13,9 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "axios": "^1.6.2",
+    "cors": "^2.8.5",
     "framer-motion": "^10.16.4",
-    "next": "14.0.2",
+    "next": "^14.0.3",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.48.2"

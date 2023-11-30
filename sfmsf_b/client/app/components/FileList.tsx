@@ -89,7 +89,7 @@ function FileList(props: any) {
         }
       });
       axios
-        .post(`http://localhost:5500/upload/${username}/${filelist}`, formData)
+        .post(`https://localhost:5500/upload/${username}/${filelist}`, formData)
         .then((res) => {
           console.log("Files uploaded successfully:", res.data);
         })
@@ -129,7 +129,7 @@ function FileList(props: any) {
       });
       axios
         .post(
-          `http://localhost:5500/upload/${username}/${list[0].name}`,
+          `https://localhost:5500/upload/${username}/${list[0].name}`,
           formData
         )
         .then((res) => {
@@ -137,6 +137,7 @@ function FileList(props: any) {
         })
         .catch((er) => console.log(er));
     }
+
 
     // ( Alert )
     list.length > 1
@@ -230,7 +231,7 @@ function FileList(props: any) {
     // ( Backend ): Begin Backend DELETE Logic
     try {
       const response = await axios.delete(
-        `http://localhost:5500/delete/${username}/${target}_${tempA}`
+        `https://localhost:5500/delete/${username}/${target}_${tempA}`
       );
       console.log("File deleted successfully:", response.data);
     } catch (error) {
@@ -291,13 +292,14 @@ function FileList(props: any) {
     // ( Backend ): Begin Backend DOWNLOAD Logic
     try {
       const response = await axios({
-        url: `http://localhost:5500/download/${username}/${index}_${tempA}`,
+        url: `https://localhost:5500/download/${username}/${index}_${tempA}`,
         method: "GET",
         responseType: "blob",
       });
 
       // Create a link element and trigger a click to download the file
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      //console.log(response.data);
+      const url = window.URL.createObjectURL(response.data);
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `${index}_${tempA}`); // Replace with the desired filename
