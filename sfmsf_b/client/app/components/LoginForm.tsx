@@ -24,12 +24,12 @@ function LoginForm(props: any) {
     changePassword(pass);
     
     axios
-       .post("http://localhost:5500/login", {
+       .post("https://localhost:5500/login", {
         username:user,
         password:pass
        })
        .then((res) => {
-        console.log(res);
+        //console.log(res);
         if(res.status == 200){
           toNextPage();
         }

@@ -7,12 +7,21 @@ const corsConfig = require("./config/corsConfig");
 const path = require("path");
 const fs = require("fs");
 const ldap = require("ldapjs");
+const https = require('https');
 
 // ( Attributes )
 const app = express();
 const PORT = 5500;
 const filesDirectory = path.join(__dirname, "files");
-app.use(cors(corsConfig));
+//app.use(cors(corsConfig));
+app.use(cors({
+  origin: 'https://localhost:3000',
+}));
+// app.use(function (req, res, next){
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, authorization");
+//   res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+// })
 app.use(express.json());
 
 // ( Custom Middleware )
@@ -59,7 +68,12 @@ app.delete("/delete/:fileName", (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+var httpsOptions = {
+  key: fs.readFileSync('PKI/client-key.pem'),
+  cert: fs.readFileSync('PKI/client-cert.pem')
+};
+https.createServer(httpsOptions, app).listen(PORT, () => console.log(`Server running on port ${PORT}`));
+//app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // // Import Modules
 // const express = require("express");
